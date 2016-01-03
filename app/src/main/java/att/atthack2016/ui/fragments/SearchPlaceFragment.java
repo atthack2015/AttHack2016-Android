@@ -1,5 +1,6 @@
 package att.atthack2016.ui.fragments;
 
+import android.content.Context;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,23 +14,30 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import att.atthack2016.R;
-import att.atthack2016.model.PlacePrediction;
+import att.atthack2016.models.StationModel;
 import att.atthack2016.ui.activities.HomeActivity;
 import att.atthack2016.ui.adapters.SearchResultsAdapter;
 import att.atthack2016.ui.adapters.interfaces.OnItemClickListener;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Edgar Salvador Maurilio on 02/01/2016.
  */
-public class SearchPlaceFragment extends Fragment implements OnItemClickListener<PlacePrediction> {
+public class SearchPlaceFragment extends Fragment implements OnItemClickListener<StationModel> {
 
     @Bind(R.id.list_places)
     RecyclerView mResultsList;
     SearchResultsAdapter mResultsAdapter;
+
+    private List<StationModel> stationModels;
 
     AppCompatEditText searchInput;
 
@@ -37,11 +45,14 @@ public class SearchPlaceFragment extends Fragment implements OnItemClickListener
     public SearchPlaceFragment() {
     }
 
+    public void setStationModels(List<StationModel> stationModels) {
+        this.stationModels = stationModels;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Nullable
@@ -63,6 +74,7 @@ public class SearchPlaceFragment extends Fragment implements OnItemClickListener
         setupSearchToolbar();
         setupSearchResultsList();
     }
+
 
     public void setupSearchToolbar() {
         Toolbar toolbar = changeColorWithTransition(getToolbar(), false);
@@ -89,7 +101,7 @@ public class SearchPlaceFragment extends Fragment implements OnItemClickListener
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                onQueryChanged(s);
+                onQueryChanged(s.toString());
             }
 
             @Override
@@ -102,12 +114,17 @@ public class SearchPlaceFragment extends Fragment implements OnItemClickListener
     }
 
 
-    public void onQueryChanged(CharSequence query) {
-        if (query.length() >= 3) {
-            //Search
-//            mSearchPlacePresenter.searchPlaces(query.toString());
-        } else if (query.length() <= 2)
-            mResultsAdapter.clear();
+    public void onQueryChanged(String query) {
+
+        List<StationModel> stationModelsResults = new ArrayList<>();
+
+        for (StationModel stationModel :
+                stationModels) {
+            if (stationModel.getName().contains(query)) {
+                stationModelsResults.add(stationModel);
+            }
+        }
+        mResultsAdapter.addAll(stationModelsResults);
     }
 
 
@@ -129,17 +146,30 @@ public class SearchPlaceFragment extends Fragment implements OnItemClickListener
         mResultsList.setAdapter(mResultsAdapter);
     }
 
-
-    private SearchResultsAdapter buildSearchResultsAdapter(OnItemClickListener<PlacePrediction> listener) {
+    private SearchResultsAdapter buildSearchResultsAdapter(OnItemClickListener<StationModel> listener) {
         SearchResultsAdapter resultsAdapter = new SearchResultsAdapter(getContext());
         resultsAdapter.setOnItemClickListener(listener);
         return resultsAdapter;
     }
 
+
     @Override
-    public void onItemClicked(PlacePrediction placePrediction) {
+    public void onItemClicked(StationModel stationModel) {
         //Click en los resultados XD
-        getActivity().finish();
+
+        hideKeyBoard();
+
+        getFragmentManager().popBackStack();
+        EventBus.getDefault().post(stationModel);
+
+    }
+
+    private void hideKeyBoard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override

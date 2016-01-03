@@ -7,12 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import att.atthack2016.R;
-import att.atthack2016.model.PlacePrediction;
+import att.atthack2016.models.StationModel;
 import att.atthack2016.ui.adapters.interfaces.OnItemClickListener;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -24,12 +23,17 @@ import butterknife.ButterKnife;
 public class SearchResultsAdapter extends RecyclerView.Adapter <SearchResultsAdapter.PlaceViewHolder> {
 
     Context context;
-    List<PlacePrediction> placePredictions;
-    OnItemClickListener<PlacePrediction> onItemClickListener;
+    List<StationModel> stationModels;
+    OnItemClickListener<StationModel> onItemClickListener;
 
     public SearchResultsAdapter(Context context) {
-        this.placePredictions = new ArrayList<>();
+        this.stationModels = new ArrayList<>();
         this.context = context;
+    }
+
+    public SearchResultsAdapter(Context context, List<StationModel> stationModels) {
+        this.context = context;
+        this.stationModels = stationModels;
     }
 
     @Override
@@ -42,27 +46,24 @@ public class SearchResultsAdapter extends RecyclerView.Adapter <SearchResultsAda
 
     @Override
     public void onBindViewHolder(PlaceViewHolder holder, int position) {
-        PlacePrediction currentResult = placePredictions.get(position);
+        StationModel currentResult = stationModels.get(position);
 
-        String placeName = currentResult.getShortName() != null?
-                currentResult.getShortName() : currentResult.description;
 
-        holder.setPlaceName(placeName);
-        holder.setPlaceAddress(currentResult.getDescription());
+        holder.setPlaceName(currentResult.getName());
+        holder.setPlaceAddress(currentResult.getName());
     }
 
     @Override
     public int getItemCount() {
-        return placePredictions.isEmpty() ? 0 : placePredictions.size();
-
+        return stationModels.isEmpty() ? 0 : stationModels.size();
     }
 
-    public void setOnItemClickListener(OnItemClickListener<PlacePrediction> onItemClickListener) {
+    public void setOnItemClickListener(OnItemClickListener<StationModel> onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public PlacePrediction getItem(int index){
-        return placePredictions.get(index);
+    public StationModel getItem(int index){
+        return stationModels.get(index);
     }
 
     /**
@@ -70,11 +71,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter <SearchResultsAda
      *
      * @param placePrediction The item to be inserted
      */
-    public void addItem(PlacePrediction placePrediction) {
+    public void addItem(StationModel placePrediction) {
         if (placePrediction == null)
             throw new NullPointerException("The item cannot be null");
 
-        placePredictions.add(placePrediction);
+        stationModels.add(placePrediction);
         notifyItemInserted(getItemCount() - 1);
     }
 
@@ -84,14 +85,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter <SearchResultsAda
      * @param placePrediction    The event to be inserted
      * @param position Index for the new event
      */
-    public void addItem(PlacePrediction placePrediction, int position) {
+    public void addItem(StationModel placePrediction, int position) {
         if (placePrediction == null)
             throw new NullPointerException("The item cannot be null");
 
         if (position < getItemCount() || position > getItemCount())
             throw new IllegalArgumentException("The position must be between 0 and lastIndex + 1");
 
-        placePredictions.add(position, placePrediction);
+        stationModels.add(position, placePrediction);
         notifyItemInserted(position);
     }
 
@@ -100,16 +101,16 @@ public class SearchResultsAdapter extends RecyclerView.Adapter <SearchResultsAda
      *
      * @param placePredictions Collection to add
      * */
-    public void addAll(List<PlacePrediction> placePredictions) {
+    public void addAll(List<StationModel> placePredictions) {
         if (placePredictions == null)
             throw new NullPointerException("The items cannot be null");
 
-        this.placePredictions.addAll(placePredictions);
+        this.stationModels.addAll(placePredictions);
         notifyItemRangeInserted(getItemCount() - 1, placePredictions.size());
     }
 
-    public void replace(List<PlacePrediction> placePredictions){
-        this.placePredictions = placePredictions;
+    public void replace(List<StationModel> placePredictions){
+        this.stationModels = placePredictions;
         notifyDataSetChanged();
     }
 
@@ -117,8 +118,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter <SearchResultsAda
      * Delete all the items
      * */
     public void clear() {
-        if (!placePredictions.isEmpty()) {
-            placePredictions.clear();
+        if (!stationModels.isEmpty()) {
+            stationModels.clear();
             notifyDataSetChanged();
         }
     }
@@ -150,7 +151,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter <SearchResultsAda
         @Override
         public void onClick(View view) {
             if (onItemClickListener != null)
-                onItemClickListener.onItemClicked(placePredictions.get(getAdapterPosition()));
+                onItemClickListener.onItemClicked(stationModels.get(getAdapterPosition()));
         }
     }
 }

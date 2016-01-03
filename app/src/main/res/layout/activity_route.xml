@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
@@ -10,7 +11,7 @@
         android:layout_height="match_parent"
         android:gravity="bottom"
         sothree:umanoFadeColor="@android:color/transparent"
-        sothree:umanoPanelHeight="0dp"
+        sothree:umanoPanelHeight="128dp"
         sothree:umanoShadowHeight="4dp">
 
         <fragment
@@ -24,16 +25,15 @@
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingButtonStartRoute"
+        android:id="@+id/floatingButtonFinishRoute"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:visibility="invisible"
         app:elevation="2dp"
         android:layout_gravity="end|bottom"
         android:layout_marginRight="@dimen/margin_default_fab"
         android:layout_marginEnd="@dimen/margin_default_fab"
         android:layout_marginBottom="96dp"
-        android:src="@drawable/star_route"
+        android:src="@mipmap/cancel_route"
         app:borderWidth="0dp" />
 
 </FrameLayout>

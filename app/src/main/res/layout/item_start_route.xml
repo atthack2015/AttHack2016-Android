@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="128dp"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageViewStation"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/profile" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewStation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Station"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/primary_text_black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Time"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/secondary_text_black"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</LinearLayout>
