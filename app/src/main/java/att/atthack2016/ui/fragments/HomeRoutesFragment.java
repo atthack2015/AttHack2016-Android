@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.gson.Gson;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Picasso;
 
@@ -33,7 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import att.atthack2016.R;
-import att.atthack2016.io.ApiClient;
+import att.atthack2016.io.ApiClientStations;
+import att.atthack2016.models.IdBusModel;
 import att.atthack2016.models.StationModel;
 import att.atthack2016.models.StationModelResponse;
 import att.atthack2016.ui.activities.RouteActivity;
@@ -51,6 +53,7 @@ import retrofit.client.Response;
  */
 public class HomeRoutesFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
+    private static final String LAG_TAG = HomeRoutesFragment.class.getSimpleName();
     private GoogleMap mMap;
 
     @Bind(R.id.sliding_layout)
@@ -122,7 +125,7 @@ public class HomeRoutesFragment extends Fragment implements OnMapReadyCallback, 
         progressDialog.setCancelable(false);
         progressDialog.setMessage(getContext().getString(R.string.loading));
 
-        ApiClient.getApiService().getStations(new Callback<StationModelResponse>() {
+        ApiClientStations.getApiService().getStations(new Callback<StationModelResponse>() {
             @Override
             public void success(StationModelResponse stationModelResponse, Response response) {
                 resultsStations = stationModelResponse.getResults();
@@ -251,9 +254,17 @@ public class HomeRoutesFragment extends Fragment implements OnMapReadyCallback, 
 
 
     public void receiveIdBus(String dataId) {
+
+        Log.d(LAG_TAG, dataId);
+
         if (isWaitingNFC) {
+
+            Gson gson = new Gson();
+
+            IdBusModel idBusModel = gson.fromJson(dataId, IdBusModel.class);
             progressDialog.dismiss();
 
+            EventBus.getDefault().postSticky(idBusModel);
             EventBus.getDefault().postSticky(resultsStations);
             EventBus.getDefault().postSticky(resultsStations.get(concurrentStation));
 

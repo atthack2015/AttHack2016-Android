@@ -10,9 +10,12 @@ import retrofit.http.GET;
 /**
  * Created by Edgar Salvador Maurilio on 03/01/2016.
  */
-public interface ApiService {
+public interface ApiServiceStations {
 
     @GET(Constants.PATH_SEARCH)
     public void getStations (Callback<StationModelResponse> serverResponse);
+
+
+
 
 }

@@ -32,12 +32,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import att.atthack2016.R;
+import att.atthack2016.io.ApiClienM2X;
+import att.atthack2016.models.IdBusModel;
 import att.atthack2016.models.StationModel;
+import att.atthack2016.models.StatusResponse;
+import att.atthack2016.models.ValueBody;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class RouteActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, OnMapReadyCallback {
 
@@ -56,7 +63,10 @@ public class RouteActivity extends AppCompatActivity implements GoogleApiClient.
     @Bind(R.id.textViewTime)
     TextView textViewTime;
     private Marker myMarker;
+    private IdBusModel idBusModel;
 
+
+    private Location concurrentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +75,15 @@ public class RouteActivity extends AppCompatActivity implements GoogleApiClient.
         ButterKnife.bind(this);
         buildGoogleApiClient();
         setupMap();
-
+        getIdBus();
         getStations();
-
         setupInfoStation();
 
+        sendId();
+    }
+
+    private void getIdBus() {
+        idBusModel = EventBus.getDefault().getStickyEvent(IdBusModel.class);
     }
 
 
@@ -187,14 +201,6 @@ public class RouteActivity extends AppCompatActivity implements GoogleApiClient.
         tryResolvedConnectionGPS(connectionResult);
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(LOG_TAG, "lat: " + location.getLatitude() + ", lon : " + location.getLongitude());
-
-        chageMarker(location);
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
-    }
 
     private void chageMarker(Location location) {
         if (myMarker != null) {
@@ -239,6 +245,102 @@ public class RouteActivity extends AppCompatActivity implements GoogleApiClient.
         Toast.makeText(RouteActivity.this, "Gracias!!!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(RouteActivity.this, HomeActivity.class);
         startActivity(intent);
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        chageMarker(location);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+
+
+        sendLatitude(location);
+        sendLongitude(location);
+
+        if (concurrentLocation != null) {
+            sendSpeed(location);
+        }
+        concurrentLocation = location;
+
+
+    }
+
+
+    private void sendId() {
+        ApiClienM2X.getApiService().sendIdBus(new ValueBody(idBusModel.getUid()), new Callback<StatusResponse>() {
+            @Override
+            public void success(StatusResponse statusResponse, Response response) {
+                Log.d("success Idbus", statusResponse.getStatus());
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("error IdBus ", error.getMessage());
+
+            }
+        });
+    }
+
+    private void sendLatitude(Location location) {
+        ApiClienM2X.getApiService().sendLatitude(new ValueBody(String.valueOf(location.getLatitude())), new Callback<StatusResponse>() {
+            @Override
+            public void success(StatusResponse statusResponse, Response response) {
+                Log.d("success Idbus", statusResponse.getStatus());
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("error IdBus ", error.getMessage());
+
+            }
+        });
+    }
+
+    private void sendLongitude(Location location) {
+        ApiClienM2X.getApiService().sendLongitude(new ValueBody(String.valueOf(location.getLongitude())), new Callback<StatusResponse>() {
+            @Override
+            public void success(StatusResponse statusResponse, Response response) {
+                Log.d("success Idbus", statusResponse.getStatus());
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("error IdBus ", error.getMessage());
+
+            }
+        });
+    }
+
+
+    private void sendSpeed(Location lastLocation) {
+
+
+        float distance[] = new float[0];
+
+        Location.distanceBetween(lastLocation.getLatitude(), lastLocation.getLongitude()
+                , concurrentLocation.getLatitude(), concurrentLocation.getLongitude(),
+                distance);
+
+
+        float speed = distance[0] / (lastLocation.getTime() - concurrentLocation.getTime());
+
+        Log.d("SPEED", String.valueOf(speed));
+
+        ApiClienM2X.getApiService().sendLatitude(new ValueBody(String.valueOf(speed)),
+                new Callback<StatusResponse>() {
+                    @Override
+                    public void success(StatusResponse statusResponse, Response response) {
+                        Log.d("success Speed", statusResponse.getStatus());
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.d("error Speed ", error.getMessage());
+
+                    }
+                });
     }
 
 
