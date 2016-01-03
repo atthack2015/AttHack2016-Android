@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Att Hack 2016</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_home">Inicio</string>
+    <string name="action_profile">Perfil</string>
+    <string name="action_settings">Configuracion</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_search">Buscar Estacion</string>
+    <string name="hint_location_search">Buscar Estación</string>
 </resources>
