@@ -317,7 +317,7 @@ public class RouteActivity extends AppCompatActivity implements GoogleApiClient.
     private void sendSpeed(Location lastLocation) {
 
 
-        float distance[] = new float[0];
+        float distance[] = new float[2];
 
         Location.distanceBetween(lastLocation.getLatitude(), lastLocation.getLongitude()
                 , concurrentLocation.getLatitude(), concurrentLocation.getLongitude(),
@@ -328,7 +328,7 @@ public class RouteActivity extends AppCompatActivity implements GoogleApiClient.
 
         Log.d("SPEED", String.valueOf(speed));
 
-        ApiClienM2X.getApiService().sendLatitude(new ValueBody(String.valueOf(speed)),
+        ApiClienM2X.getApiService().sendSpeed(new ValueBody(String.valueOf(speed)),
                 new Callback<StatusResponse>() {
                     @Override
                     public void success(StatusResponse statusResponse, Response response) {

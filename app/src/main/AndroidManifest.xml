@@ -27,11 +27,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -39,9 +34,18 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.RouteActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_route"/>
+        <activity
+            android:name=".ui.activities.RouteActivity"
+            android:label="@string/title_route"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.activities.SplashActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
